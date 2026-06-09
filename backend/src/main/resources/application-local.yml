@@ -1,0 +1,31 @@
+# ============================================================
+# application-local.yml — local development overrides
+# ============================================================
+# Active profile: spring.profiles.active=local
+# (or set env var SPRING_PROFILES_ACTIVE=local)
+# ============================================================
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/booking_assistant
+    username: postgres
+    password: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+  flyway:
+    enabled: true
+
+meta:
+  webhook:
+    # Use any string here for local testing; configure the same value in ngrok / Postman
+    verify-token: local_dev_token
+
+logging:
+  level:
+    com.terminai.bookingassistant: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
