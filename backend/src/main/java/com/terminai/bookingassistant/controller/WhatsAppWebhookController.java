@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  * REST controller that handles Meta WhatsApp Cloud API webhook events.
@@ -75,15 +76,15 @@ public class WhatsAppWebhookController {
             @RequestParam(name = "hub.challenge",    required = false) String challenge
     ) {
         if ("subscribe".equals(mode) && verifyToken.equals(token)) {
-            // Validate the challenge before echoing it back.
-            // Meta sends a numeric string; reject anything that is not alphanumeric
-            // or contains HTML/script characters to prevent reflected XSS.
+            // Validate and sanitize the challenge before echoing it back.
+            // Meta sends a numeric string; reject anything containing HTML/script
+            // characters, then HTML-escape as a defence-in-depth measure.
             if (challenge == null || !challenge.matches("[A-Za-z0-9_\\-]+")) {
                 log.warn("Meta webhook verification received invalid challenge value.");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid challenge");
             }
             log.info("Meta webhook verification successful.");
-            return ResponseEntity.ok(challenge);
+            return ResponseEntity.ok(HtmlUtils.htmlEscape(challenge));
         }
         log.warn("Meta webhook verification failed: mode={}, token matches={}", mode, verifyToken.equals(token));
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Verification failed");
