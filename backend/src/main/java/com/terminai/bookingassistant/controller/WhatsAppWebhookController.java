@@ -75,6 +75,13 @@ public class WhatsAppWebhookController {
             @RequestParam(name = "hub.challenge",    required = false) String challenge
     ) {
         if ("subscribe".equals(mode) && verifyToken.equals(token)) {
+            // Validate the challenge before echoing it back.
+            // Meta sends a numeric string; reject anything that is not alphanumeric
+            // or contains HTML/script characters to prevent reflected XSS.
+            if (challenge == null || !challenge.matches("[A-Za-z0-9_\\-]+")) {
+                log.warn("Meta webhook verification received invalid challenge value.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid challenge");
+            }
             log.info("Meta webhook verification successful.");
             return ResponseEntity.ok(challenge);
         }
