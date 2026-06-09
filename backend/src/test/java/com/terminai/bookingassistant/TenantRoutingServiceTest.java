@@ -140,7 +140,7 @@ class TenantRoutingServiceTest {
             String messageId,
             String messageBody
     ) {
-        // Use Jackson deserialization would be cleaner, but constructor approach avoids
+        // Using Jackson deserialization would be cleaner, but the reflection approach avoids
         // Jackson dependency in unit test and validates the extraction paths directly.
         WhatsAppWebhookPayload.TextContent text = new WhatsAppWebhookPayload.TextContent();
         setField(text, "body", messageBody);

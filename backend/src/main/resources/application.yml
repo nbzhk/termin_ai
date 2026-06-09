@@ -59,7 +59,9 @@ meta:
   webhook:
     # Token configured in Meta Developer Console → App → Webhooks → Verify Token.
     # Must be provided via environment variable: META_WEBHOOK_VERIFY_TOKEN
-    verify-token: ${META_WEBHOOK_VERIFY_TOKEN:change_me_before_deploy}
+    # No default is set — startup will fail if this variable is not configured,
+    # which is intentional: deploying without a real token would be insecure.
+    verify-token: ${META_WEBHOOK_VERIFY_TOKEN}
   # Meta permanent access token (used by the Send API — future use)
   access-token: ${META_ACCESS_TOKEN:}
 

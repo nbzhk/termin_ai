@@ -77,9 +77,9 @@ public class WhatsAppWebhookController {
     ) {
         if ("subscribe".equals(mode) && verifyToken.equals(token)) {
             // Validate and sanitize the challenge before echoing it back.
-            // Meta sends a numeric string; reject anything containing HTML/script
-            // characters, then HTML-escape as a defence-in-depth measure.
-            if (challenge == null || !challenge.matches("[A-Za-z0-9_\\-]+")) {
+            // Meta sends a numeric-only string; accept digits only to minimise
+            // the attack surface, then HTML-escape as a defence-in-depth measure.
+            if (challenge == null || !challenge.matches("[0-9]+")) {
                 log.warn("Meta webhook verification received invalid challenge value.");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid challenge");
             }
